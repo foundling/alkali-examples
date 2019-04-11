@@ -62,7 +62,10 @@ class Dropdown extends Element.with({
     /* state */
     this.hidden = hidden || false
     this.searchFilter = new VString('')
-    this.activeSelections = reactive([])
+
+    // think there, if new items are added, the active selection reprocesses array
+    // array of booleans, indices are list items
+    this.activeSelections = items.to(items => reactive(items.map(Boolean)) )
 
     /* pick constructors */
     this.Item = (ItemConstructor || LI).with('.dre-dd-list-item', {
@@ -100,7 +103,7 @@ class Dropdown extends Element.with({
             hidden: this.searchFilter.to(searchFilter => {
               if (searchFilter.length == 0)
                 return false
-              return !Boolean(itemText.match(searchFilter))
+              return !Boolean(itemText.toLowerCase().includes(searchFilter))
             }),
             selected: this.activeSelections.to(selections => selections[index])
           }
@@ -121,7 +124,7 @@ class Dropdown extends Element.with({
     if (index < 0) 
       return
 
-    this.activeSelections.set(index, this.activeSelections.get(index) == null ? true : null )
+    this.activeSelections.set(index, !this.activeSelections.get(index))
 
   }
 
@@ -141,7 +144,7 @@ const items = reactive(['one','two','three'])
 const reasonsRejected = reactive([])
 const D = Dropdown.defineElement('dre-dd')
 
-
+window.items = items
 const dd = new D({
   items,
   hidden: false,
@@ -149,5 +152,8 @@ const dd = new D({
 })
 document.body.appendChild(dd)
 
-//document.body.appendChild(new alkali.Div(searchFilter))
-//document.body.appendChild(new alkali.Div(activeSelections.to(JSON.stringify)))
+document.body.appendChild(new alkali.H1('SEARCH STRING: '))
+document.body.appendChild(new alkali.Div(dd.searchFilter))
+
+document.body.appendChild(new alkali.H1('Selections: '))
+document.body.appendChild(new alkali.Div(dd.activeSelections.to(JSON.stringify)))
