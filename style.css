@@ -20,7 +20,8 @@ ul, li {
 li {
   list-style-type: none;
   height: 20px;
-  width: 130px;
+  min-width: 130px;
+  width: fit-content;
   background: lightgray;
 }
 
@@ -33,9 +34,16 @@ li.hidden {
 }
 
 input {
+  height: 20px;
+  margin: 0;
+  padding: 0;
   border: 1px lightgray solid;
   border-radius: 5px;
+  width: 130px;
 }
 li.closest {
   background: lightblue;
+}
+.top-result {
+
 }

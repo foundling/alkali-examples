@@ -84,6 +84,7 @@ class Dropdown extends Element.with({
       textContent: itemText,
       id: `dre-dd-item-${index}`,
       classes: {
+        'top-result': index === 0,
         hidden: searchFilter.to(searchFilter => {
           if (searchFilter.length == 0)
             return false
