@@ -22,6 +22,7 @@ const {
  * value: 
  * events
  *
+ *  maxSelections
  *  maxSelections: Number,
  *  items: [],
  *  searchInputConstructor,
@@ -46,20 +47,26 @@ class Dropdown extends Element.with({
 
   /*
    * API:
-   * data, ui elements, events
-   * data: items, value
-   * ui: input elements 
-   * events: 
+   *
+   *  data, ui elements, events
+   *  data: items, value
+   *  ui: input elements 
+   *  events: 
    *  dre-dd-selected: {},
    *  dre-dd-removed
+   *
+   *  positioning
+   *
    */ 
 
-  created({ items, hidden, ItemConstructor, InputConstructor }) {
+  created({ parent, items, hidden, ItemConstructor, InputConstructor }) {
 
     /* ensure data is reactive */
+    // do i allow a single item? Array.isArray
     this.items = items instanceof Variable ? items : reactive(items || [])
 
     /* state */
+    this.parent = parent
     this.hidden = hidden || false
     this.searchFilter = new VString('')
 
@@ -83,6 +90,7 @@ class Dropdown extends Element.with({
   }
   attached() {
 
+    const parent = this.parent
     const [dropdownContainer] = [...this.children]
     const [searchContainer, listContainer] = [...dropdownContainer.children]
     this.dropdownContainer = dropdownContainer
@@ -94,6 +102,8 @@ class Dropdown extends Element.with({
         this.searchFilter.put(e.target.value)
       }  
     }))
+
+    // clean this up
     this.listContainer.append(
       new UL('.dre-dd-list', [
         this.items.map((itemText, index) => new this.Item('.dre-dd-list-item', {
@@ -113,7 +123,7 @@ class Dropdown extends Element.with({
     )
 
     this.listContainer.addEventListener('click', this.onSelect.bind(this))
-    
+    this.position(this.parent)
   }
   onSelect({ target }) {
 
@@ -125,6 +135,37 @@ class Dropdown extends Element.with({
       return
 
     this.activeSelections.set(index, !this.activeSelections.get(index))
+
+  }
+
+  position(node, options = { corner: 'bottomright' }) {
+
+    const rect = node.getBoundingClientRect()
+    const me = this.getBoundingClientRect()
+
+    switch (options.corner) {
+
+      case 'bottomleft':
+        this.style.left = `${rect.left}px` 
+        this.style.top = `${rect.bottom}px`
+        return
+      
+      case 'bottomright':
+        this.style.left = `${rect.right - this.offsetWidth}px` 
+        this.style.top = `${rect.bottom}px`
+        return
+      
+      case 'topleft':
+        this.style.left = `${rect.left}px` 
+        this.style.top = `${rect.top}px`
+        return
+      
+      case 'topright':
+        this.style.left = `${rect.left}px` 
+        this.style.top = `${rect.top}px`
+        return
+      
+    }
 
   }
 
@@ -140,20 +181,26 @@ class Dropdown extends Element.with({
 }
 //export default Dropdown.defineElement('dre-dd')
 
+const block = new Div('.block')
 const items = reactive(['one','two','three'])
 const reasonsRejected = reactive([])
 const D = Dropdown.defineElement('dre-dd')
 
-window.items = items
+document.body.appendChild(block)
+
+
 const dd = new D({
+  parent: document.querySelector('.block'),
   items,
   hidden: false,
   //Item: MyListItem
 })
+
 document.body.appendChild(dd)
 
+document.body.appendChild(new alkali.Div(dd.activeSelections.to(JSON.stringify)))
 document.body.appendChild(new alkali.H1('SEARCH STRING: '))
 document.body.appendChild(new alkali.Div(dd.searchFilter))
 
 document.body.appendChild(new alkali.H1('Selections: '))
-document.body.appendChild(new alkali.Div(dd.activeSelections.to(JSON.stringify)))
+

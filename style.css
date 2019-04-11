@@ -6,6 +6,10 @@ html, body {
   padding: 0;
 } 
 
+dre-dd {
+  position: absolute;
+}
+
 button {
   display: block;
   background: transparent;
@@ -84,3 +88,9 @@ li.closest {
 
 }
 
+.block {
+  margin: 0 auto;
+  height: 100px;
+  width: 280px;
+  background: red;
+}
