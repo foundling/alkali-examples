@@ -7,12 +7,13 @@ const {
   Div,
   Input, 
   LI, 
-  Span,
+  Button,
   UL, 
 
   Renderer, 
   Variable,
   VString,
+  VArray,
 
 } = alkali
 
@@ -26,19 +27,15 @@ const {
  */
 
 /* selection and filter data */
-const activeSelections = reactive({})
-const activeSelectionsKeys = activeSelections.to(Object.keys)
+const activeSelections = reactive([])
 const searchFilter = new VString('')
 
 /* default constructors */
 const DefaultItem = LI.with('.btn.btn-sm')
-const DefaultInput = Div.with('.dre-dropdown-search-input-container', [
-  Input.with('.dre-dropdown-search-input'),
-  Span.with('.dre-dropdown-search-input-icon')
+const DefaultInput = Div.with('.search-input-container', [
+  Input.with('.search-input', { placeholder: 'Reasons for Rejection'}),
+  Button.with('.search-input-icon.fa.fa-search')
 ])
-
-const FilteredSelection = () => {
-}
 
 class Dropdown extends Element.with({ 
 
@@ -65,6 +62,7 @@ class Dropdown extends Element.with({
 
     /* ensure types are alkali */ 
     this.items = items instanceof Variable ? items : reactive(items || [])
+    console.log(this.items)
 
     /* pick constructors */
     this.Item = Item || DefaultItem
@@ -80,11 +78,10 @@ class Dropdown extends Element.with({
     })
 
     this.ul = this.children[0]
-    const listItems = this.items.map((itemText, index) => new this.Item({
+    const listItems = this.items.map((itemText, index) => new this.Item('.dre-dropdown-list-item', {
       textContent: itemText,
       id: `dre-dd-item-${index}`,
       classes: {
-        'top-result': index === 0,
         hidden: searchFilter.to(searchFilter => {
           if (searchFilter.length == 0)
             return false
@@ -96,6 +93,7 @@ class Dropdown extends Element.with({
 
     this.prepend(this.inputContainer)
     this.ul.append(...listItems)
+
     this.ul.addEventListener('click', this.onSelect.bind(this))
     
   }
@@ -113,12 +111,26 @@ class Dropdown extends Element.with({
 
 }
 
+const items = reactive(['one','two','three'])
+const reasonsRejected = reactive([])
 const D = Dropdown.defineElement('dre-dropdown')
-document.body.appendChild(new D({
-  data: {
-    items: ['one','two','three'] 
+const MyListItem = LI.with('.rejection-reason', {
+  onclick() {
+    console.log('toggle rating!')
   }
-}))
-document.body.appendChild(new alkali.Div(searchFilter))
-document.body.appendChild(new alkali.Div(activeSelections.to(JSON.stringify)))
+})
+
+const dd = new D({
+  data: {
+    items
+  },
+  ui: {
+    Item: MyListItem
+  }
+})
+document.body.appendChild(dd)
+
+
+//document.body.appendChild(new alkali.Div(searchFilter))
+//document.body.appendChild(new alkali.Div(activeSelections.to(JSON.stringify)))
 ///export default Dropdown.defineElement('dre-dropdown')
