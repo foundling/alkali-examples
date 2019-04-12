@@ -85,19 +85,21 @@ class Dropdown extends Element {
 
     const selectedList = props.items.to(items => items.map((item, index) => {
       return new Button('.dre-dd-list-item.selected', {
-        textContent: item,
         classes: {
           hidden: props.selectedByIndex.to(selectedMap => {
             return !selectedMap[index]
           })
         }
-      })
+      }, [
+        Span(item),
+        Button('x')
+      ])
     }))
 
     this.append(new (Div.with('.dre-dd-container', {
       children: [
-        Div.with('.dre-dd-selected-container', selectedList),
         Div.with('.dre-dd-search-container'),
+        Div.with('.dre-dd-selected-container', selectedList),
         Div.with('.dre-dd-list-container', {
           classes: {
             hidden: not(props.open)
@@ -107,7 +109,7 @@ class Dropdown extends Element {
     })))
 
     const [dropdownContainer] = [...this.children]
-    const [selectionsContainer, searchContainer, listContainer] = [...dropdownContainer.children]
+    const [searchContainer, selectionsContainer, listContainer] = [...dropdownContainer.children]
     this.dropdownContainer = dropdownContainer
     this.searchContainer = searchContainer
     this.listContainer = listContainer
@@ -123,7 +125,6 @@ class Dropdown extends Element {
     this.listContainer.append(
       new Div('.dre-dd-list', [
         props.items.map((itemText, index) => new props.Item({
-          textContent: itemText,
           id: `dre-dd-item-${index}`,
           classes: {
             hidden: this.searchFilter.to(searchFilter => {
@@ -132,8 +133,8 @@ class Dropdown extends Element {
               return !Boolean(itemText.toLowerCase().includes(searchFilter.toLowerCase()))
             }),
             selected: props.selectedByIndex.to(selections => selections[index])
-          }
-        }))
+          },
+        }, [ Span(itemText) ]))
 
       ])
     )
@@ -211,6 +212,8 @@ class Dropdown extends Element {
         return
     }
 
+  }
+  attached() {
   }
 
   toggle() {

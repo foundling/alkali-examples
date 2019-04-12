@@ -17,6 +17,9 @@ dre-dd, dre-dd * {
 .dre-dd-search-container {
   background: white;
 }
+.dre-dd-container {
+  position: relative;
+}
 .dre-dd-list {
   width: 100%;
 }
@@ -28,6 +31,10 @@ dre-dd, dre-dd * {
   min-width: 130px;
   background: whitesmoke;
   border-bottom: 1px solid darkgray;
+  width: 100%;
+}
+
+.dre-dd-list-item > span {
   padding: 2px 5px;
 }
 
@@ -35,9 +42,7 @@ dre-dd, dre-dd * {
   background: lightblue;
 }
 
-.dre-dd-list-item {
-  width: 100%;
-}
+
 
 .dre-dd-search-input {
   border: 1px solid red;
@@ -50,8 +55,13 @@ dre-dd, dre-dd * {
   align-items: center;
 }
 .dre-dd-selected-container {
+  box-sizing: border-box;
+  width: 100%;
   height: auto;
-  max-height: 
+  height: 100px; 
+  background: white;
+  padding: 10px 0px;
+  overflow-y: scroll;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -74,8 +84,19 @@ dre-dd, dre-dd * {
 }
 
 .dre-dd-list-item.selected {
-  background: lightblue;
+  background: #3a69fd;
+  color: white;
+  display: inline-flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0px 20px 0px 0px;
 
+}
+.dre-dd-list-item.selected > button {
+  height: 100%;
+  background: transparent;
+  border: 0px solid transparent;
+  color: red;
 }
 
 .search-input-container {
