@@ -48,6 +48,9 @@ class Dropdown extends Element.with({
     this.corner = corner
     this.searchFilter = new VString('')
     this.selectedByIndex = reactive({})
+    this.selectedValues = this.selectedByIndex.to(obj => {
+      return _.pickBy(obj, (x) => x != null)
+    })
 
     /* pick constructors */
     // API: custom constructors must have at least the default children

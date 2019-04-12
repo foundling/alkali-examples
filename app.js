@@ -42,15 +42,6 @@ document.body.appendChild(
     ]
   )
 )
-/*
-const filteredSelections = all(dd.selectedByIndex, dd.items)
-                            .to(([xs, items]) => 
-                              xs
-                                .map((x,i) => x ? i : null)
-                                .filter(i => i != null) 
-                                .map(selectedIndex => items[selectedIndex])
-                            )
-                            */
 
 document.body.appendChild(
   new Div({
