@@ -22,11 +22,12 @@ button {
   background: whitesmoke;
 }
 
-ul, li {
+.dre-dd-list, .dre-dd-list-item {
   margin: 0;
   padding: 0;
 }
-li {
+.dre-dd-list-item {
+  text-align: left;
   box-sizing: border-box;
   list-style-type: none;
   height: 20px;
@@ -37,26 +38,27 @@ li {
   padding: 2px 5px;
 }
 
-li.selected {
+.dre-dd-list-item.selected {
   background: lightgreen;
 }
 
-li:hover {
+dre-dd {
+  width: 150px;
+}
+
+.dre-dd-list-item:hover {
   background: lightgray;
   color: #329fff;
 }
-li.hidden {
+.dre-dd-list-item.hidden {
   display: none;
 }
 
-dre-dropdown {
-  width: 150px;
-}
 
-.dre-dropdown-list {
+.dre-dd-list {
   width: 150px;
 }
-.dre-dropdown-list-item {
+.dre-dd-list-item {
   width: 100%;
 }
 .search-input-container {
@@ -68,10 +70,6 @@ dre-dropdown {
 }
 .fa.fa-search {
   padding: 2px;
-}
-
-input,
-span {
 }
 
 input {

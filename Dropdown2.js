@@ -21,6 +21,7 @@ const {
 
 class Dropdown extends Element.with({ 
 
+  /*
   children: [ 
     Div.with('.dre-dd-container', {
       children: [
@@ -29,10 +30,11 @@ class Dropdown extends Element.with({
       ]
     })
   ] 
+  */
 
 }) {
 
-  created({ parent=document.body, corner='topright', items, closed=false, ItemConstructor, InputConstructor }) {
+  created({ parent=document.body, open=true, corner='topright', items, closed=false, ItemConstructor, InputConstructor }) {
 
     /* ensure data is reactive */
 
@@ -41,6 +43,7 @@ class Dropdown extends Element.with({
       console.log(this)
 
     /* state */
+    this.open = reactive(open)
     this.parent = parent
     this.corner = corner
     this.searchFilter = new VString('')
@@ -50,9 +53,7 @@ class Dropdown extends Element.with({
 
     /* pick constructors */
     // API: custom constructors must have at least the default children
-    this.Item = (ItemConstructor || Button.with('.dre-dd-list-item', {
-    }))
-
+    this.Item = ItemConstructor || Button.with('.dre-dd-list-item')
     this.Input = (InputConstructor || Div.with('.dre-dd-search-input', {
       onkeyup: (e) => {
         this.searchFilter.put(e.target.value)
@@ -65,6 +66,17 @@ class Dropdown extends Element.with({
 
   }
   attached() {
+
+    this.append(new (Div.with('.dre-dd-container', {
+      children: [
+        Div.with('.dre-dd-search-container'),
+        Div.with('.dre-dd-list-container', {
+          classes: {
+            hidden: not(this.open)
+          }
+        })
+      ]
+    })))
 
     const [dropdownContainer] = [...this.children]
     const [searchContainer, listContainer] = [...dropdownContainer.children]
@@ -103,9 +115,8 @@ class Dropdown extends Element.with({
 
     this.handleOutsideClicks = (e) => {
       const dropdown = this
-      const dropdownWasClicked = e.composedPath().includes(dreDD) // find a composed path polyfill, doesnt work in edge/ie
+      const dropdownWasClicked = e.composedPath().includes(dropdown) // find a composed path polyfill, doesnt work in edge/ie
       if (!dropdownWasClicked) {
-        // if i'm 
       }
     }
     parent.addEventListener('click', this.handleOutsideClicks)

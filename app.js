@@ -8,8 +8,7 @@ const block = new Button('.dd-button', {
     fontSize: '40px',
       padding: '50px',
       border: '1px solid black',
-      bottom: '0px',
-      left: '0px',
+      marginLeft: '300px',
   }
 })
 const items = reactive(['one','two','three'])
@@ -25,7 +24,7 @@ const dd = new D({
   }
 }, {
   parent: document.querySelector('.dd-button'),
-  //position: 'bottomleft',
+  corner: 'bottomleft',
   items: data,
   //Item: MyListItem
 })
