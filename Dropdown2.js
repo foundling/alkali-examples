@@ -19,20 +19,7 @@ const {
 
 } = alkali
 
-class Dropdown extends Element.with({ 
-
-  /*
-  children: [ 
-    Div.with('.dre-dd-container', {
-      children: [
-        Div.with('.dre-dd-search-container'),
-        Div.with('.dre-dd-list-container')
-      ]
-    })
-  ] 
-  */
-
-}) {
+class Dropdown extends Element { 
 
   created({ parent=document.body, open=true, corner='topright', items, closed=false, ItemConstructor, InputConstructor }) {
 
