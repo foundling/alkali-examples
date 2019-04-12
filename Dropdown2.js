@@ -69,10 +69,9 @@ class Dropdown extends Element.with({
     this.parent = parent
     this.hidden = hidden || false
     this.searchFilter = new VString('')
-
     // think there, if new items are added, the active selection reprocesses array
     // array of booleans, indices are list items
-    this.activeSelections = items.to(items => reactive(items.map(Boolean)) )
+    this.selectedByIndex = items.to(items => reactive(items.map(_ => false)) )
 
     /* pick constructors */
     this.Item = (ItemConstructor || LI).with('.dre-dd-list-item', {
@@ -115,7 +114,7 @@ class Dropdown extends Element.with({
                 return false
               return !Boolean(itemText.toLowerCase().includes(searchFilter))
             }),
-            selected: this.activeSelections.to(selections => selections[index])
+            selected: this.selectedByIndex.to(selections => selections[index])
           }
         }))
 
@@ -134,11 +133,12 @@ class Dropdown extends Element.with({
     if (index < 0) 
       return
 
-    this.activeSelections.set(index, !this.activeSelections.get(index))
+    this.selectedByIndex.set(index, !this.selectedByIndex.get(index))
 
   }
 
-  position(node, options = { corner: 'bottomright' }) {
+  position(node=this.parentNode, options = { corner: 'bottomleft' }) {
+    // return early if there is no parent, to handle case of 'just a dropdown'
 
     const rect = node.getBoundingClientRect()
     const me = this.getBoundingClientRect()
@@ -161,10 +161,9 @@ class Dropdown extends Element.with({
         return
       
       case 'topright':
-        this.style.left = `${rect.left}px` 
+        this.style.left = `${rect.right - this.offsetWidth}px` 
         this.style.top = `${rect.top}px`
         return
-      
     }
 
   }
@@ -179,9 +178,17 @@ class Dropdown extends Element.with({
   }
 
 }
-//export default Dropdown.defineElement('dre-dd')
 
-const block = new Div('.block')
+const block = new Button('.dd-button', { 
+  textContent: 'dropdown', 
+  style: {
+    fontSize: '40px',
+      padding: '50px',
+      border: '1px solid black',
+      bottom: '0px',
+      left: '0px',
+  }
+})
 const items = reactive(['one','two','three'])
 const reasonsRejected = reactive([])
 const D = Dropdown.defineElement('dre-dd')
@@ -190,7 +197,7 @@ document.body.appendChild(block)
 
 
 const dd = new D({
-  parent: document.querySelector('.block'),
+  parent: document.querySelector('.dd-button'),
   items,
   hidden: false,
   //Item: MyListItem
@@ -198,9 +205,37 @@ const dd = new D({
 
 document.body.appendChild(dd)
 
-document.body.appendChild(new alkali.Div(dd.activeSelections.to(JSON.stringify)))
-document.body.appendChild(new alkali.H1('SEARCH STRING: '))
-document.body.appendChild(new alkali.Div(dd.searchFilter))
+document.body.appendChild(
+  new Div({
+    style: { 
+      'margin-top': '200px',
+    }
+  }, [ new Span('SEARCH STRING: '), 
+       new Span(dd.searchFilter) ]
+  )
+)
+const filteredSelections = all(dd.selectedByIndex, dd.items)
+                            .to(([xs, items]) => 
+                              xs
+                                .map((x,i) => x ? i : null)
+                                .filter(i => i != null) 
+                                .map(selectedIndex => items[selectedIndex])
+                            )
 
-document.body.appendChild(new alkali.H1('Selections: '))
-
+document.body.appendChild(
+  new Div({
+    style: { 
+    }
+  }, [ 
+    new Span('SELECTIONS: '), 
+    new Span(filteredSelections)
+  ])
+)
+document.body.appendChild(
+  new Div({
+    style: { 
+    }
+  }, [ new Span('SELECTION DATA: '), 
+       new Span(dd.selectedByIndex.to(x => x.join(' | '))) ]
+  )
+)
