@@ -42,6 +42,8 @@ class Dropdown extends Element {
 
     /* ensure data is reactive */
     props.items = items instanceof Variable ? items : reactive(items || [])
+
+    // join w/ selected values somehow
     props.values = values instanceof Variable ? values : reactive(values || [])
     props.maxSelections = maxSelections || props.items.get('length') 
 
@@ -82,15 +84,19 @@ class Dropdown extends Element {
   ready(props) {
 
     const selectedList = props.items.to(items => items.map((item, index) => {
-      return new Button('.dre-dd-selection', {
-        hidden: props.selectedByIndex.to(selectedMap => selectedMap[index])
+      return new Button('.dre-dd-list-item.selected', {
+        textContent: item,
+        classes: {
+          hidden: props.selectedByIndex.to(selectedMap => {
+            return !selectedMap[index]
+          })
+        }
       })
     }))
+
     this.append(new (Div.with('.dre-dd-container', {
       children: [
-        Div.with('.dre-dd-selections-container', [
-            ...props.selectedValues.to(selected => selected.map(value => new props.Item('.selected-item', [value])))
-        ]),
+        Div.with('.dre-dd-selected-container', selectedList),
         Div.with('.dre-dd-search-container'),
         Div.with('.dre-dd-list-container', {
           classes: {

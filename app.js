@@ -11,7 +11,12 @@ const block = new Button('.dd-button', {
       marginLeft: '300px',
   }
 })
-const items = reactive(['one','two','three'])
+/*
+const items = new VArray(fetch('https://jsonplaceholder.typicode.com/todos')
+    .then(response => response.json())
+    .then(data => data.map(item => item.title)))
+*/
+
 const reasonsRejected = reactive([])
 const D = Dropdown.defineElement('dre-dd')
 
@@ -19,13 +24,16 @@ document.body.appendChild(block)
 
 
 const dd = new D('#demo', {
-  classes: {
-    hidden: hideMe,
-  }
-}, {
+    classes: {
+      hidden: hideMe,
+    }
+  }, {
+  placeholder: 'rejection reasons',
   parent: document.querySelector('.dd-button'),
   corner: 'bottomleft',
   items: data,
+  values: ['Aimee', 'Aaron'],
+  //items: data,
   //Item: MyListItem
 })
 
@@ -49,7 +57,7 @@ document.body.appendChild(
     }
   }, [ 
     new Span('SELECTIONS: '), 
-    //new Span(filteredSelections.to(x => x.join(' | ')))
+    new Span(dd.selectedValues.to(values => values.join(' | ')))
   ])
 )
 document.body.appendChild(
@@ -60,3 +68,5 @@ document.body.appendChild(
        new Span(dd.selectedByIndex.to(obj => Object.keys(obj).map(k => obj[k]).join(' | '))) ]
   )
 )
+
+//document.body.append(new Test({items:['alex','ramsdell'] }))
