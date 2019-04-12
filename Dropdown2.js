@@ -1,6 +1,7 @@
 const { 
 
   all,
+  not,
   reactive,
 
   Element,
@@ -31,34 +32,36 @@ class Dropdown extends Element.with({
 
 }) {
 
-  created({ parent=document.body, corner='topright', items, hidden, ItemConstructor, InputConstructor }) {
+  created({ parent=document.body, corner='topright', items, closed=false, ItemConstructor, InputConstructor }) {
 
     /* ensure data is reactive */
 
     // API: do i allow a single item? Array.isArray
     this.items = items instanceof Variable ? items : reactive(items || [])
+      console.log(this)
 
     /* state */
     this.parent = parent
     this.corner = corner
-    this.hidden = hidden || false
     this.searchFilter = new VString('')
     // think there, if new items are added, the active selection reprocesses array
     // array of booleans, indices are list items
     this.selectedByIndex = this.items.to(items => reactive(items.map(_ => false)) )
 
     /* pick constructors */
-    this.Item = (ItemConstructor || LI).with('.dre-dd-list-item', {
+    // API: custom constructors must have at least the default children
+    this.Item = (ItemConstructor || Button.with('.dre-dd-list-item', {
+    }))
+
+    this.Input = (InputConstructor || Div.with('.dre-dd-search-input', {
       onkeyup: (e) => {
         this.searchFilter.put(e.target.value)
-      }
-    })
-    this.Input = (InputConstructor || Div).with('.dre-dd-search-input', {
+      },
       children: [
         Input.with('.dre-dd-search-input'),
         Span.with('.fa.fa-caret-down.dre-dd-search-input-icon')
       ]
-    })
+    }))
 
   }
   attached() {
@@ -68,16 +71,17 @@ class Dropdown extends Element.with({
     this.dropdownContainer = dropdownContainer
     this.searchContainer = searchContainer
     this.listContainer = listContainer
-
-    this.searchContainer.append(new this.Input({
+    this.searchInput = new this.Input({
       onkeyup: (e) => {
         this.searchFilter.put(e.target.value)
       }  
-    }))
+    })
+
+    this.searchContainer.append(this.searchInput)
 
     // clean this up
     this.listContainer.append(
-      new UL('.dre-dd-list', [
+      new Div('.dre-dd-list', [
         this.items.map((itemText, index) => new this.Item('.dre-dd-list-item', {
           textContent: itemText,
           id: `dre-dd-item-${index}`,
@@ -96,6 +100,11 @@ class Dropdown extends Element.with({
 
     this.listContainer.addEventListener('click', this.onSelect.bind(this))
     this.position(this.parent)
+
+    parent.addEventListener('click', (e) => {
+      console.log(e.path.includes(this))
+    })
+
   }
   onSelect({ target }) {
 

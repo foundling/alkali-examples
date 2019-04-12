@@ -1,4 +1,8 @@
+const hideMe = reactive(false)
 const block = new Button('.dd-button', { 
+  onclick() {
+    hideMe.put(!hideMe.valueOf())
+  },
   textContent: 'dropdown', 
   style: {
     fontSize: '40px',
@@ -16,10 +20,13 @@ document.body.appendChild(block)
 
 
 const dd = new D({
-  //parent: document.querySelector('.dd-button'),
+  classes: {
+    hidden: hideMe,
+  }
+}, {
+  parent: document.querySelector('.dd-button'),
   //position: 'bottomleft',
-  items: reactive(data),
-  hidden: false,
+  items: data,
   //Item: MyListItem
 })
 
