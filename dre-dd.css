@@ -1,30 +1,15 @@
-html, body {
-  font-family: Arial;
-  height: 100%;
-  width: 100%;
-  margin: 0;
-  padding: 0;
-} 
-
 dre-dd {
   position: absolute;
-}
-
-button {
-  display: block;
-  background: transparent;
-  border: 0;
-}
-#container {
-  font-family: Verdana;
-  height: 100%;
-  width: 100%;
-  background: whitesmoke;
+  width: 150px;
 }
 
 .dre-dd-list, .dre-dd-list-item {
   margin: 0;
   padding: 0;
+}
+
+.dre-dd-list {
+  width: 150px;
 }
 .dre-dd-list-item {
   text-align: left;
@@ -38,29 +23,27 @@ button {
   padding: 2px 5px;
 }
 
-.dre-dd-list-item.selected {
-  background: lightgreen;
+.dre-dd-list-item.closest {
+  background: lightblue;
 }
 
-dre-dd {
-  width: 150px;
+.dre-dd-list-item {
+  width: 100%;
 }
 
 .dre-dd-list-item:hover {
   background: lightgray;
   color: #329fff;
 }
+
 .dre-dd-list-item.hidden {
   display: none;
 }
 
+.dre-dd-list-item.selected {
+  background: lightgreen;
+}
 
-.dre-dd-list {
-  width: 150px;
-}
-.dre-dd-list-item {
-  width: 100%;
-}
 .search-input-container {
   border: 1px lightgray solid;
   border-radius: 5px;
@@ -72,23 +55,13 @@ dre-dd {
   padding: 2px;
 }
 
-input {
+.dre-dd-search-input {
   border: 0px solid transparent;
   height: 20px;
   margin: 0;
   padding: 0;
-
-}
-li.closest {
-  background: lightblue;
-}
-.top-result {
-
 }
 
-.block {
-  margin: 0 auto;
-  height: 100px;
-  width: 280px;
-  background: red;
+.dre-dd-search-input > .dre-dd-search-input-icon {
+  display: inline-flex;
 }

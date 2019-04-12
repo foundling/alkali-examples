@@ -18,7 +18,7 @@ const D = Dropdown.defineElement('dre-dd')
 document.body.appendChild(block)
 
 
-const dd = new D({
+const dd = new D('#demo', {
   classes: {
     hidden: hideMe,
   }
@@ -42,6 +42,7 @@ document.body.appendChild(
     ]
   )
 )
+/*
 const filteredSelections = all(dd.selectedByIndex, dd.items)
                             .to(([xs, items]) => 
                               xs
@@ -49,6 +50,7 @@ const filteredSelections = all(dd.selectedByIndex, dd.items)
                                 .filter(i => i != null) 
                                 .map(selectedIndex => items[selectedIndex])
                             )
+                            */
 
 document.body.appendChild(
   new Div({
@@ -56,16 +58,14 @@ document.body.appendChild(
     }
   }, [ 
     new Span('SELECTIONS: '), 
-    new Span(filteredSelections.to(x => x.join(' | ')))
+    //new Span(filteredSelections.to(x => x.join(' | ')))
   ])
 )
-/*
 document.body.appendChild(
   new Div({
     style: { 
     }
   }, [ new Span('SELECTION DATA: '), 
-       new Span(dd.selectedByIndex.to(x => x.join(' | '))) ]
+       new Span(dd.selectedByIndex.to(obj => Object.keys(obj).map(k => obj[k]).join(' | '))) ]
   )
 )
-*/

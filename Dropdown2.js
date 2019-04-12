@@ -40,16 +40,14 @@ class Dropdown extends Element.with({
 
     // API: do i allow a single item? Array.isArray
     this.items = items instanceof Variable ? items : reactive(items || [])
-      console.log(this)
+     console.log('items in created: ', this.items)
 
     /* state */
     this.open = reactive(open)
     this.parent = parent
     this.corner = corner
     this.searchFilter = new VString('')
-    // think there, if new items are added, the active selection reprocesses array
-    // array of booleans, indices are list items
-    this.selectedByIndex = this.items.to(items => reactive(items.map(_ => false)) )
+    this.selectedByIndex = reactive({})
 
     /* pick constructors */
     // API: custom constructors must have at least the default children
@@ -134,7 +132,15 @@ class Dropdown extends Element.with({
     if (index < 0) 
       return
 
-    this.selectedByIndex.set(index, !this.selectedByIndex.get(index))
+    const currentValue = this.selectedByIndex.get(index)
+
+    if (currentValue == null)
+      this.selectedByIndex.set(index, this.items[index])
+    else
+      this.selectedByIndex.undefine(index)
+
+    console.log(currentValue, this.selectedByIndex.valueOf())
+
 
   }
 
