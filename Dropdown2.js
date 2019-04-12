@@ -101,10 +101,18 @@ class Dropdown extends Element.with({
     this.listContainer.addEventListener('click', this.onSelect.bind(this))
     this.position(this.parent)
 
-    parent.addEventListener('click', (e) => {
-      console.log(e.path.includes(this))
-    })
+    this.handleOutsideClicks = (e) => {
+      const dropdown = this
+      const dropdownWasClicked = e.composedPath().includes(dreDD) // find a composed path polyfill, doesnt work in edge/ie
+      if (!dropdownWasClicked) {
+        // if i'm 
+      }
+    }
+    parent.addEventListener('click', this.handleOutsideClicks)
 
+  }
+  detached() {
+    parent.removeEventListener('click', this.handleOutsideClicks)
   }
   onSelect({ target }) {
 
