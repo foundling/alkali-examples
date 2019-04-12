@@ -23,6 +23,7 @@ const {
 class Dropdown extends Element { 
 
   created(props) { 
+
     const {
       items, 
       values, 
@@ -34,10 +35,8 @@ class Dropdown extends Element {
       maxSelections=null,
       ItemConstructor,
       InputConstructor 
-    } = props
+    } = this.props = props
 
-
-    this.props = props
     // API: do i allow a single item? Array.isArray
     // HOW TO ACCEPT A PROMISE?
 
