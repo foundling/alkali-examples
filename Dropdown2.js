@@ -19,12 +19,26 @@ const {
 
 } = alkali
 
+/*
+ * Why: Fexibility
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ */
 
 class Dropdown extends Element { 
 
   created(props) { 
 
     const {
+
       items, 
       values, 
       parent=document.body, 
@@ -35,22 +49,23 @@ class Dropdown extends Element {
       maxSelections=null,
       ItemConstructor,
       InputConstructor 
+
     } = this.props = props
 
-    // API: do i allow a single item? Array.isArray
-    // HOW TO ACCEPT A PROMISE?
+    // Q: HOW TO ACCEPT A PROMISE?
 
     /* ensure data is reactive */
     props.items = items instanceof Variable ? items : reactive(items || [])
 
-    // join w/ selected values somehow
+    /* ensure data is reactive and initialized */
+    // join w/ selected values somehow.  Just call initializeSelected
     props.values = values instanceof Variable ? values : reactive(values || [])
     props.maxSelections = maxSelections || props.items.get('length') 
 
     // work out what happens when you reach max. 
     // proposal: 
     // if it's one, just change the selection.
-    // if multiple, need to deselect before selecting a new item 
+    // if multiple, change last selection to this one.
 
     /* state */
     props.open = reactive(open)
