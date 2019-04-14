@@ -4,13 +4,14 @@ const {
   not,
   reactive,
 
-  Element,
+  Button,
   Div,
+  Element,
+  I,
   Input, 
   LI, 
-  Button,
-  UL, 
   Span,
+  UL, 
 
   Renderer, 
   Variable,
@@ -19,20 +20,6 @@ const {
 
 } = alkali
 
-/*
- * Why: Fexibility
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- */
-
 class Dropdown extends Element { 
 
   created(props) { 
@@ -40,18 +27,22 @@ class Dropdown extends Element {
     const {
 
       items, 
-      values, 
-      parent=document.body, 
-      open=true, 
-      corner='topright', 
-      closed=false,
-      placeholder='',
-      maxSelections=null,
+      values = [], 
+      parent = null, 
+      open = true, 
+      corner = 'topright', 
+      closed = false,
+      placeholder = '',
+      maxSelections = null,
       ItemConstructor,
       InputConstructor 
 
     } = this.props = props
 
+
+    props.state = {
+      itemContainerOpen: reactive(true)
+    }
     // Q: HOW TO ACCEPT A PROMISE?
 
     /* ensure data is reactive */
@@ -71,7 +62,7 @@ class Dropdown extends Element {
     props.open = reactive(open)
     props.placeholder = reactive(placeholder)
     props.parent = parent
-    props.corner = corner
+    props.corner = corner // verify type algebraically
     props.searchFilter = new VString('')
     props.selectedByIndex = reactive(this.initializeSelected(props.values.valueOf(), props.items.valueOf())) // map from index to value
     props.selectedValues = props.selectedByIndex.to(obj => { // array of just values
@@ -98,16 +89,18 @@ class Dropdown extends Element {
   }
   ready(props) {
 
+    /* SELECTION LIST */
     const selectedList = props.items.to(items => items.map((item, index) => {
       return new Button('.dre-dd-list-item.selected', {
         classes: {
-          hidden: props.selectedByIndex.to(selectedMap => {
-            return !selectedMap[index]
+          selected: props.selectedByIndex.to(selectedMap => {
+            console.log(selectedMap, index)
+            return Boolean(selectedMap[index])
           })
         }
       }, [
         Span(item),
-        Button('x')
+        I('.fa.fa-remove.remove-item')
       ])
     }))
 
@@ -117,7 +110,9 @@ class Dropdown extends Element {
         Div.with('.dre-dd-selected-container', selectedList),
         Div.with('.dre-dd-list-container', {
           classes: {
-            hidden: not(props.open)
+            /*
+            hidden: not(props.state.itemContainerOpen),
+            */
           }
         })
       ]
@@ -136,17 +131,19 @@ class Dropdown extends Element {
 
     this.searchContainer.append(this.searchInput)
 
-    // clean this up
+    /* UNSELECTED LIST ITEMS */
     this.listContainer.append(
       new Div('.dre-dd-list', [
         props.items.map((itemText, index) => new props.Item({
           id: `dre-dd-item-${index}`,
           classes: {
+            /*
             hidden: this.searchFilter.to(searchFilter => {
               if (searchFilter.length == 0)
                 return false
               return !Boolean(itemText.toLowerCase().includes(searchFilter.toLowerCase()))
             }),
+            */
             selected: props.selectedByIndex.to(selections => selections[index])
           },
         }, [ Span(itemText) ]))
@@ -155,13 +152,14 @@ class Dropdown extends Element {
     )
 
     this.listContainer.addEventListener('click', this.onSelect.bind(this))
-    this.position(props.parent)
+
+    if (props.parent)
+      this.position(props.parent)
 
     this.handleOutsideClicks = (e) => {
       const dropdown = this
       const dropdownWasClicked = e.composedPath().includes(dropdown) // find a composed path polyfill, doesnt work in edge/ie
-      if (!dropdownWasClicked) {
-      }
+      // figure out various state variables
     }
     parent.addEventListener('click', this.handleOutsideClicks)
 
@@ -199,31 +197,30 @@ class Dropdown extends Element {
   }
 
   position(node, options = { corner: this.props.corner }) {
-    // return early if there is no parent, to handle case of 'just a dropdown'
 
-    const rect = node.getBoundingClientRect()
+    const mountPoint = node.getBoundingClientRect()
     const me = this.getBoundingClientRect()
 
     switch (options.corner) {
 
       case 'bottomleft':
-        this.style.left = `${rect.left}px` 
-        this.style.top = `${rect.bottom}px`
+        this.style.top = `${mountPoint.bottom}px`
+        this.style.left = `${mountPoint.left}px` 
         return
       
       case 'bottomright':
-        this.style.left = `${rect.right - this.offsetWidth}px` 
-        this.style.top = `${rect.bottom}px`
+        this.style.top = `${mountPoint.bottom}px`
+        this.style.left = `${mountPoint.right - this.offsetWidth}px` 
         return
       
       case 'topleft':
-        this.style.left = `${rect.left}px` 
-        this.style.top = `${rect.top}px`
+        this.style.top = `${mountPoint.bottom}px`
+        this.style.left = `${mountPoint.left}px` 
         return
       
       case 'topright':
-        this.style.left = `${rect.right - this.offsetWidth}px` 
-        this.style.top = `${rect.top}px`
+        this.style.top = `${mountPoint.top}px`
+        this.style.left = `${mountPoint.right - this.offsetWidth}px` 
         return
     }
 

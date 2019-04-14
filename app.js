@@ -30,9 +30,9 @@ const dd = new D('#demo', {
   }, {
   placeholder: 'rejection reasons',
   parent: document.querySelector('.dd-button'),
-  corner: 'bottomleft',
-  items: data,
-  values: ['Aimee', 'Aaron'],
+  corner: 'topleft',
+  items: data.slice(0,5),
+  values: ['Aaron'],
   //items: data,
   //Item: MyListItem
 })

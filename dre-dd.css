@@ -1,3 +1,9 @@
+/*  main outer elements */
+
+dre-dd, dre-dd * {
+  box-sizing: border-box;
+}
+
 dre-dd {
   position: absolute;
   width: 200px;
@@ -5,44 +11,37 @@ dre-dd {
   padding: 1px;
 }
 
-dre-dd, dre-dd * {
-  box-sizing: border-box;
+.dre-dd-container {
+  position: relative;
 }
 
-.dre-dd-list, .dre-dd-list-item {
-  margin: 0;
-  padding: 0;
+/* base element styles */
+
+.dre-dd-container .dre-dd-list-item {
+  width: 100%;
 }
+.dre-dd-list-item:focus {
+  background: lightgray !important;
+  outline: 0;
+}
+
+.dre-dd-container button {
+  border: none;
+}
+
+/* search */
 
 .dre-dd-search-container {
   background: white;
 }
-.dre-dd-container {
-  position: relative;
-}
-.dre-dd-list {
+
+.search-input-container {
+  border: 1px lightgray solid;
+  border-radius: 5px;
+  display: inline-flex;
+  align-items: center;
   width: 100%;
 }
-.dre-dd-list-item {
-  font-size: 1em;
-  text-align: left;
-  box-sizing: border-box;
-  list-style-type: none;
-  min-width: 130px;
-  background: whitesmoke;
-  border-bottom: 1px solid darkgray;
-  width: 100%;
-}
-
-.dre-dd-list-item > span {
-  padding: 2px 5px;
-}
-
-.dre-dd-list-item.closest {
-  background: lightblue;
-}
-
-
 
 .dre-dd-search-input {
   border: 1px solid red;
@@ -53,61 +52,6 @@ dre-dd, dre-dd * {
   display: inline-flex;
   flex-direction: row-reverse;
   align-items: center;
-}
-.dre-dd-selected-container {
-  box-sizing: border-box;
-  width: 100%;
-  height: auto;
-  height: 100px; 
-  background: white;
-  padding: 10px 0px;
-  overflow-y: scroll;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-.dre-dd-search-input-el:focus {
-  outline: 0;
-}
-.dre-dd-list-item:focus {
-  background: lightgray;
-  outline: 0;
-}
-.dre-dd-list-item:hover {
-  background: lightgray;
-  color: #329fff;
-}
-
-.dre-dd-list-item.hidden {
-  display: none;
-}
-
-.dre-dd-list-item.selected {
-  background: #3a69fd;
-  color: white;
-  display: inline-flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0px 20px 0px 0px;
-
-}
-.dre-dd-list-item.selected > button {
-  height: 100%;
-  background: transparent;
-  border: 0px solid transparent;
-  color: red;
-}
-
-.search-input-container {
-  border: 1px lightgray solid;
-  border-radius: 5px;
-  display: inline-flex;
-  align-items: center;
-  width: 100%;
-}
-.fa.fa-search {
-  padding: 2px;
 }
 
 .dre-dd-search-input-el {
@@ -120,7 +64,98 @@ dre-dd, dre-dd * {
   padding: 0;
 }
 
+.dre-dd-search-input-el:focus {
+  outline: 0;
+}
+
 .dre-dd-search-input > .dre-dd-search-input-icon {
   display: inline-flex;
   color: lightgray;
+  padding: 2px;
+}
+
+
+/* SELECTED LIST */
+
+.dre-dd-selected-container {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100px; 
+  background: white;
+  padding: 10px 0px;
+  overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.dre-dd-selected-container > .dre-dd-list-item {
+  display: none;
+}
+.dre-dd-selected-container > .dre-dd-list-item.selected {
+  border-radius: 2px;
+  display: inline-flex !important;
+  background: #4484c7;
+  /*font-size: 11px; */
+  color: white;
+  justify-content: space-between;
+  align-items: center;
+  margin: 3px;
+  width: calc(100% - 6px);
+}
+
+.dre-dd-selected-container  .dre-dd-list-item.selected span {
+  border-top-right-radius: 2px;
+  border-bottom-right-radius: 2px;
+  padding: 5px;
+}
+.dre-dd-selected-container  .dre-dd-list-item.selected .remove-item {
+  border: 1px solid transparent; /* why do i have to add border to get icon to fit perfectly? */
+  background: rgba(255,255,255,0.2);
+  padding: 5px;
+  height: 100%;
+  color: white;
+}
+.dre-dd-selected-container  .dre-dd-list-item.selected .remove-item:hover {
+  background: rgba(255,255,255,0.4);
+}
+
+/* UNSELECTED LIST */
+
+.dre-dd-list-containter > .dre-dd-list-item:focus {
+  background: lightgray;
+  outline: 0;
+}
+
+.dre-dd-list, .dre-dd-list-item {
+  margin: 0;
+  padding: 0;
+}
+.dre-dd-list {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.dre-dd-list > .dre-dd-list-item {
+  padding: 5px;
+  border: none;
+  display: inline-flex;
+  /* font-size: 12px; */
+  text-align: left;
+  box-sizing: border-box;
+  list-style-type: none;
+  min-width: 130px;
+  background: white;
+  border-bottom: 1px solid #EFEFEF;
+}
+
+.dre-dd-list > .dre-dd-list-item:hover {
+  background: whitesmoke;
+  color: #329fff;
+}
+
+.dre-dd-list > .dre-dd-list-item.selected {
+  display: none;
 }
