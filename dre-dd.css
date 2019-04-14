@@ -128,17 +128,17 @@ dre-dd {
   outline: 0;
 }
 
-.dre-dd-list, .dre-dd-list-item {
+.dre-dd-list-container, .dre-dd-list-item {
   margin: 0;
   padding: 0;
 }
-.dre-dd-list {
+.dre-dd-list-container {
   display: flex;
   flex-direction: column;
   width: 100%;
 }
 
-.dre-dd-list > .dre-dd-list-item {
+.dre-dd-list-container > .dre-dd-list-item {
   padding: 5px;
   border: none;
   display: inline-flex;
@@ -151,11 +151,11 @@ dre-dd {
   border-bottom: 1px solid #EFEFEF;
 }
 
-.dre-dd-list > .dre-dd-list-item:hover {
+.dre-dd-list-container > .dre-dd-list-item:hover {
   background: whitesmoke;
   color: #329fff;
 }
 
-.dre-dd-list > .dre-dd-list-item.selected {
+.dre-dd-list-container > .dre-dd-list-item.selected {
   display: none;
 }

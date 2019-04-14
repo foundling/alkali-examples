@@ -132,22 +132,17 @@ class Dropdown extends Element {
 
     /* UNSELECTED LIST ITEMS */
     this.listContainer.append(
-      new Div('.dre-dd-list', [
-        props.items.map((itemText, index) => new props.Item({
-          id: `dre-dd-item-${index}`,
-          classes: {
-            /*
-            hidden: this.searchFilter.to(searchFilter => {
-              if (searchFilter.length == 0)
-                return false
-              return !Boolean(itemText.toLowerCase().includes(searchFilter.toLowerCase()))
-            }),
-            */
-            selected: props.selectedByIndex.to(selections => selections[index])
-          },
-        }, [ Span(itemText) ]))
-
-      ])
+      ...props.items.map((itemText, index) => new props.Item({
+        id: `dre-dd-item-${index}`,
+        classes: {
+          hidden: this.searchFilter.to(searchFilter => {
+            if (searchFilter.length == 0)
+              return false
+            return !Boolean(itemText.toLowerCase().includes(searchFilter.toLowerCase()))
+          }),
+          selected: props.selectedByIndex.to(selections => selections[index])
+        },
+      }, [ Span(itemText) ]))
     )
 
     this.selectionsContainer.addEventListener('click', this.remove.bind(this))
