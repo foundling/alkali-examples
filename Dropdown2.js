@@ -110,9 +110,7 @@ class Dropdown extends Element {
         Div.with('.dre-dd-selected-container', selectedList),
         Div.with('.dre-dd-list-container', {
           classes: {
-            /*
-            hidden: not(props.state.itemContainerOpen),
-            */
+            //hidden: not(props.state.itemContainerOpen),
           }
         })
       ]
@@ -122,6 +120,7 @@ class Dropdown extends Element {
     const [searchContainer, selectionsContainer, listContainer] = [...dropdownContainer.children]
     this.dropdownContainer = dropdownContainer
     this.searchContainer = searchContainer
+    this.selectionsContainer = selectionsContainer 
     this.listContainer = listContainer
     this.searchInput = new props.Input({
       onkeyup: (e) => {
@@ -151,6 +150,7 @@ class Dropdown extends Element {
       ])
     )
 
+    this.selectionsContainer.addEventListener('click', this.remove.bind(this))
     this.listContainer.addEventListener('click', this.onSelect.bind(this))
 
     if (props.parent)
@@ -174,6 +174,15 @@ class Dropdown extends Element {
         memo[i] = v
     }
     return memo
+  }
+  select() {
+  }
+  remove({ target }) {
+    const props = this.props
+    const listItems = [...this.selectionsContainer.children]
+    const index = listItems.indexOf(target)
+    debugger
+
   }
   onSelect({ target }) {
 
