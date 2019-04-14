@@ -30,8 +30,8 @@ class Dropdown extends Element {
       values = [], 
       parent = null, 
       open = true, 
+      closeOnClick = true,
       corner = 'topright', 
-      closed = false,
       placeholder = '',
       maxSelections = null,
       ItemConstructor,
@@ -39,11 +39,6 @@ class Dropdown extends Element {
 
     } = this.props = props
 
-
-    props.state = {
-      itemContainerOpen: reactive(true)
-    }
-    // Q: HOW TO ACCEPT A PROMISE?
 
     /* ensure data is reactive */
     props.items = items instanceof Variable ? items : reactive(items || [])
@@ -103,16 +98,23 @@ class Dropdown extends Element {
         I('.fa.fa-remove.remove-item')
       ])
     }))
+    const unselectedList = props.items.map((itemText, index) => new props.Item({
+      id: `dre-dd-item-${index}`,
+      classes: {
+        hidden: this.searchFilter.to(searchFilter => {
+          if (searchFilter.length == 0)
+            return false
+          return !Boolean(itemText.toLowerCase().includes(searchFilter.toLowerCase()))
+        }),
+        selected: props.selectedByIndex.to(selections => selections[index])
+      },
+    }, [ Span(itemText) ]))
 
     this.append(new (Div.with('.dre-dd-container', {
       children: [
         Div.with('.dre-dd-search-container'),
         Div.with('.dre-dd-selected-container', selectedList),
-        Div.with('.dre-dd-list-container', {
-          classes: {
-            //hidden: not(props.state.itemContainerOpen),
-          }
-        })
+        Div.with('.dre-dd-list-container')
       ]
     })))
 
@@ -131,19 +133,7 @@ class Dropdown extends Element {
     this.searchContainer.append(this.searchInput)
 
     /* UNSELECTED LIST ITEMS */
-    this.listContainer.append(
-      ...props.items.map((itemText, index) => new props.Item({
-        id: `dre-dd-item-${index}`,
-        classes: {
-          hidden: this.searchFilter.to(searchFilter => {
-            if (searchFilter.length == 0)
-              return false
-            return !Boolean(itemText.toLowerCase().includes(searchFilter.toLowerCase()))
-          }),
-          selected: props.selectedByIndex.to(selections => selections[index])
-        },
-      }, [ Span(itemText) ]))
-    )
+    this.listContainer.append(...unselectedList)
 
     this.selectionsContainer.addEventListener('click', this.remove.bind(this))
     this.listContainer.addEventListener('click', this.onSelect.bind(this))
@@ -152,9 +142,10 @@ class Dropdown extends Element {
       this.position(props.parent)
 
     this.handleOutsideClicks = (e) => {
+      const target = e.target
       const dropdown = this
-      const dropdownWasClicked = e.composedPath().includes(dropdown) // find a composed path polyfill, doesnt work in edge/ie
-      // figure out various state variables
+      const isOutsideClick = !dropdown.contains(target)
+      console.log('is an outside click: ', isOutsideClick)
     }
     parent.addEventListener('click', this.handleOutsideClicks)
 
@@ -173,17 +164,17 @@ class Dropdown extends Element {
   select() {
   }
   remove({ target }) {
+    // add nicer ids to each list and get index from 
+    // toggle index of selected 
     const props = this.props
     const listItems = [...this.selectionsContainer.children]
     const index = listItems.indexOf(target)
-    debugger
 
   }
   onSelect({ target }) {
 
     const props = this.props
-    const [ul] = [...this.listContainer.children]
-    const listItems = [...ul.children]
+    const listItems = [...this.listContainer.children]
     const index = listItems.indexOf(target)
     const selectedValueCount = Object.keys(props.selectedValues.valueOf()).length
 
