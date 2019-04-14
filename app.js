@@ -32,7 +32,7 @@ const dd = new D('#demo', {
   parent: document.querySelector('.dd-button'),
   corner: 'topleft',
   items: data.slice(0,5),
-  values: ['Aaron'],
+  //values: ['Aaron'],
   //items: data,
   //Item: MyListItem
 })

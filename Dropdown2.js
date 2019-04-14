@@ -58,12 +58,17 @@ class Dropdown extends Element {
     props.placeholder = reactive(placeholder)
     props.parent = parent
     props.corner = corner // verify type algebraically
-    props.searchFilter = new VString('')
     props.selectedByIndex = reactive(this.initializeSelected(props.values.valueOf(), props.items.valueOf())) // map from index to value
     props.selectedValues = props.selectedByIndex.to(obj => { // array of just values
       return Object.keys(obj).reduce((arr, key) => {
         return obj[key] ? arr.concat(obj[key]) : arr
       }, [])
+    })
+    props.searchFilter = new VString('')
+    props.hasMatches = all(props.searchFilter, props.items).to(([searchFilter, items]) => {
+      if (searchFilter.length === 0) 
+        return true 
+      return items.filter(item => item.toLowerCase().includes(searchFilter.toLowerCase())).length > 0
     })
 
     /* pick constructors */
@@ -87,9 +92,9 @@ class Dropdown extends Element {
     /* SELECTION LIST */
     const selectedList = props.items.to(items => items.map((item, index) => {
       return new Button('.dre-dd-list-item.selected', {
+        id: `dre-dd-selected-item-${index}`,
         classes: {
           selected: props.selectedByIndex.to(selectedMap => {
-            console.log(selectedMap, index)
             return Boolean(selectedMap[index])
           })
         }
@@ -98,23 +103,32 @@ class Dropdown extends Element {
         I('.fa.fa-remove.remove-item')
       ])
     }))
-    const unselectedList = props.items.map((itemText, index) => new props.Item({
-      id: `dre-dd-item-${index}`,
-      classes: {
-        hidden: this.searchFilter.to(searchFilter => {
-          if (searchFilter.length == 0)
-            return false
-          return !Boolean(itemText.toLowerCase().includes(searchFilter.toLowerCase()))
-        }),
-        selected: props.selectedByIndex.to(selections => selections[index])
-      },
-    }, [ Span(itemText) ]))
+    const unselectedList = props.items.to(items => {
+      return items.length <= 0 ? [ new Button('.dre-dd-no-results') ] : items.map((itemText, index) => new props.Item({
+        id: `dre-dd-unselected-item-${index}`,
+        classes: {
+          filtered: this.searchFilter.to(searchFilter => {
+            if (searchFilter.length == 0)
+              return false
+            return !Boolean(itemText.toLowerCase().includes(searchFilter.toLowerCase()))
+          }),
+          selected: props.selectedByIndex.to(selections => selections[index])
+        },
+      }, [ Span(itemText) ]))
+    })
 
     this.append(new (Div.with('.dre-dd-container', {
       children: [
         Div.with('.dre-dd-search-container'),
         Div.with('.dre-dd-selected-container', selectedList),
-        Div.with('.dre-dd-list-container')
+        Div.with('.dre-dd-list-container'),
+        Div.with('.dre-dd-list-item.no-matches-found', {
+          classes: {
+            hidden: this.props.hasMatches
+          }
+        }, [
+          Span('No Results Found!')
+        ]),
       ]
     })))
 
@@ -135,8 +149,8 @@ class Dropdown extends Element {
     /* UNSELECTED LIST ITEMS */
     this.listContainer.append(...unselectedList)
 
+    this.listContainer.addEventListener('click', this.select.bind(this))
     this.selectionsContainer.addEventListener('click', this.remove.bind(this))
-    this.listContainer.addEventListener('click', this.onSelect.bind(this))
 
     if (props.parent)
       this.position(props.parent)
@@ -145,7 +159,6 @@ class Dropdown extends Element {
       const target = e.target
       const dropdown = this
       const isOutsideClick = !dropdown.contains(target)
-      console.log('is an outside click: ', isOutsideClick)
     }
     parent.addEventListener('click', this.handleOutsideClicks)
 
@@ -161,33 +174,35 @@ class Dropdown extends Element {
     }
     return memo
   }
-  select() {
-  }
-  remove({ target }) {
-    // add nicer ids to each list and get index from 
-    // toggle index of selected 
-    const props = this.props
-    const listItems = [...this.selectionsContainer.children]
-    const index = listItems.indexOf(target)
-
-  }
-  onSelect({ target }) {
+  select({ target }) {
 
     const props = this.props
     const listItems = [...this.listContainer.children]
-    const index = listItems.indexOf(target)
-    const selectedValueCount = Object.keys(props.selectedValues.valueOf()).length
+    const targetIndex = listItems.indexOf(target)
+    const parentIndex = listItems.indexOf(target.parentNode)
+    const index = [targetIndex, parentIndex].filter(i => i >= 0)[0]
 
-    if (index < 0) 
+    if (index == null)
       return
 
-    /* problematic: which to deselect ? */
     const currentValue = props.selectedByIndex.get(index)
     if (currentValue == null) {
       props.selectedByIndex.set(index, props.items.get(index))
     }
     else
       props.selectedByIndex.undefine(index)
+
+  }
+  remove({ target }) {
+
+    const props = this.props
+    const listItems = [...this.selectionsContainer.children]
+    if (!target.classList.contains('remove-item'))
+      return
+    const parentIndex = listItems.indexOf(target.parentNode)
+
+    const currentValue = props.selectedByIndex.get(parentIndex)
+    props.selectedByIndex.undefine(parentIndex)
 
   }
 
@@ -219,6 +234,9 @@ class Dropdown extends Element {
         return
     }
 
+  }
+  isChildOf(nodeA, nodeB) {
+    return nodeB.contains(nodeA)
   }
   attached() {
   }

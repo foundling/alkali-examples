@@ -19,7 +19,4 @@ html, body {
 dre-dd#demo {
 }
 
-.dre-dd-list-container {
-  max-height: 450px;
-  overflow-y: auto;
-}
+
